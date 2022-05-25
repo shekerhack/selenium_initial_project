@@ -1,32 +1,46 @@
-package test;
+package scripts;
 
 import org.openqa.selenium.By;
+import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import utilities.Driver;
 
 public class TestCase2 {
+    /*
+    Given user navigates to “https://comfyelite.com/”
+    When user clicks on “CONTACT US” link in the header
+    Then user should be navigated to “CONTACT US” page
+    And user should be able to see heading1 as "Connect With Us"
+    And user should be able to see “Facebook” icon and hyperlink reference for it should be “https://www.facebook.com/103179127717601”
+    And user should be able to see “Instagram” icon and hyperlink reference for it should be “https://www.instagram.com/comfyelite”
+     */
     public static void main(String[] args) {
-
         WebDriver driver = Driver.getDriver();
+
         driver.get("https://comfyelite.com/");
 
-        WebElement contactUs = driver.findElement(By.xpath("//a[@href='/contact-us']"));
-        contactUs.click();
-        if(driver.getCurrentUrl().equals("https://comfyelite.com/contact-us")) System.out.println("Contact Us url validation is PASSED");
-        else System.out.println("Contact Us url validation is FAILED");
+        WebElement contactUsLink = driver.findElement(By.xpath("//a[text()='Contact Us']"));
+        contactUsLink.click();
 
-        WebElement heading1 = driver.findElement(By.xpath("//h1[@role='heading']"));
-        if(heading1.isDisplayed() && heading1.getText().equals("Connect With Us")) System.out.println("Heading 1 validation is Passed");
-        else System.out.println("Heading 1 validation is Failed");
+        if(driver.getTitle().contains("Contact Us")) System.out.println("User is on Contact Us page");
+        else throw new NotFoundException("User is not routed to Contact Us page");
 
-        WebElement facebookIcon = driver.findElement(By.xpath("//a[@data-aid='SOCIAL_FACEBOOK_LINK']"));
-        System.out.println(facebookIcon.isDisplayed() && facebookIcon.getAttribute("href").equals("https://www.facebook.com/103179127717601") ? "Facebook icon and hyperlink validation is PASSED" : "Facebook icon and hyperlink validation is FAILED");
+        WebElement heading1 = driver.findElement(By.tagName("h1"));
+        WebElement facebookIcon = driver.findElement(By.xpath("//div[@data-aid='SOCIAL_SOCIAL_LINKS']/a[1]"));
+        WebElement instagramIcon = driver.findElement(By.xpath("//div[@data-aid='SOCIAL_SOCIAL_LINKS']/a[2]"));
 
-        WebElement instagramIcon = driver.findElement(By.xpath("//a[@data-aid='SOCIAL_INSTAGRAM_LINK']"));
-        System.out.println(instagramIcon.isDisplayed() && instagramIcon.getAttribute("href").equals("https://www.instagram.com/comfyelite") ? "Instagram icon and hyperlink validation is PASSED" : "Instagram icon and hyperlink validation is FAILED");
+        if(heading1.getText().equals("Connect With Us")) System.out.println("Heading1 validation is passed");
+        else throw new NotFoundException("Heading1 is not displayed as expected");
+
+        if(facebookIcon.isDisplayed() && facebookIcon.getAttribute("href").equals("https://www.facebook.com/103179127717601"))
+            System.out.println("Facebook icon validation is passed");
+        else throw new NotFoundException("Facebook icon not displayed as expected");
+
+        if(instagramIcon.isDisplayed() && instagramIcon.getAttribute("href").equals("https://www.instagram.com/comfyelite"))
+            System.out.println("Instagram icon validation is passed");
+        else throw new NotFoundException("Instagram icon not displayed as expected");
 
         Driver.quitDriver();
     }
-
 }
